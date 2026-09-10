@@ -1,0 +1,1114 @@
+<title>Mythbolt Field Instruments</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   MYTHBOLT — FIELD INSTRUMENTS
+   A rack, not a brochure. Every panel does the thing it describes.
+
+   Deliberately single-finish: an instrument is a lit object in a dark
+   room. Every colour is painted explicitly so the page never borrows
+   the host's ground.
+
+   COLOUR HAS MEANING HERE:
+     cyan  = the instrument
+     coral = you / the gap. Never used decoratively.
+   ═══════════════════════════════════════════════════════════════════ */
+:root{
+  --void:#070A0B;
+  --panel:#0D1315;
+  --panel-2:#111A1C;
+  --panel-3:#162124;
+  --rule:#1B2629;
+  --rule-hot:#2A393D;
+  --ink:#DDE7E5;
+  --ink-2:#8CA09D;
+  --ink-3:#5A6D6B;
+  --cy:#4FD8C8;
+  --cy-deep:#1B4A46;
+  --cy-glow:rgba(79,216,200,.15);
+  --leak:#FF6F5E;
+  --leak-deep:#4A211C;
+  --warn:#E8A33D;
+
+  --f-d:"Archivo",system-ui,-apple-system,sans-serif;
+  --f-m:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+
+  --rail:232px;
+  --gut:clamp(1.1rem,3.2vw,2.6rem);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--f-d);
+  font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* the drawing grid, barely there */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--rule) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--rule) 1px,transparent 1px);
+  background-size:78px 78px;opacity:.28;
+  mask-image:radial-gradient(ellipse at 50% 30%,#000 5%,transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 5%,transparent 78%);
+}
+
+h1,h2,h3{margin:0;font-family:var(--f-d);letter-spacing:-.02em;line-height:1.12;text-wrap:balance}
+p{margin:0}
+a{color:var(--cy);text-decoration:none;border-bottom:1px solid var(--cy-deep)}
+a:hover{border-color:var(--cy)}
+:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
+
+.mono{font-family:var(--f-m);font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ══════════════════════ RAIL ══════════════════════ */
+.rail{
+  position:fixed;inset:0 auto 0 0;width:var(--rail);z-index:20;
+  border-right:1px solid var(--rule);
+  background:linear-gradient(180deg,var(--panel) 0%,var(--void) 100%);
+  display:flex;flex-direction:column;padding:1.4rem 0;
+}
+.mark{padding:0 1.2rem 1.5rem;display:grid;gap:.45rem}
+.mark b{
+  font-size:.98rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  display:flex;align-items:center;gap:.5rem;
+}
+.mark b svg{width:15px;height:15px;color:var(--cy);flex:none}
+.mark span{
+  font-family:var(--f-m);font-size:.58rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+
+.idx{list-style:none;margin:0;padding:0 .55rem;display:grid;gap:1px;flex:1;align-content:start}
+.idx a{
+  display:grid;grid-template-columns:auto 1fr;gap:.6rem;align-items:baseline;
+  padding:.52rem .65rem;border:0;border-radius:2px;
+  font-family:var(--f-m);font-size:.68rem;letter-spacing:.05em;
+  color:var(--ink-2);transition:background .18s,color .18s;
+}
+.idx a i{font-style:normal;color:var(--ink-3);font-size:.6rem}
+.idx a:hover{background:var(--panel-2);color:var(--ink)}
+.idx a.on{background:var(--cy-deep);color:var(--cy)}
+.idx a.on i{color:var(--cy)}
+
+.readout{
+  margin:0 .55rem;padding:.85rem .65rem 0;border-top:1px solid var(--rule);
+  display:grid;gap:.4rem;
+}
+.readout div{display:flex;justify-content:space-between;gap:.5rem}
+.readout dt,.readout dd{
+  margin:0;font-family:var(--f-m);font-size:.58rem;letter-spacing:.08em;
+}
+.readout dt{color:var(--ink-3);text-transform:uppercase}
+.readout dd{color:var(--cy);font-variant-numeric:tabular-nums}
+.pulse{
+  display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--cy);
+  margin-right:.35rem;vertical-align:middle;animation:blip 2.2s ease-in-out infinite;
+}
+@keyframes blip{0%,100%{opacity:.25}50%{opacity:1;box-shadow:0 0 8px var(--cy)}}
+
+@media(max-width:940px){
+  .rail{
+    position:sticky;inset:0 auto auto 0;width:100%;height:auto;flex-direction:row;
+    align-items:center;gap:1rem;padding:.7rem var(--gut);
+    border-right:0;border-bottom:1px solid var(--rule);
+    background:rgba(10,15,16,.94);backdrop-filter:blur(12px);
+  }
+  .mark{padding:0;gap:.1rem}
+  .idx{display:none}
+  .readout{margin:0 0 0 auto;padding:0;border:0;grid-auto-flow:column;gap:1rem}
+  .readout div{flex-direction:column;gap:0}
+}
+
+/* ══════════════════════ BAY ══════════════════════ */
+.bay{position:relative;z-index:1;margin-left:var(--rail);padding:0 var(--gut) 5rem}
+@media(max-width:940px){.bay{margin-left:0}}
+
+/* ── masthead ── */
+.mast{padding:clamp(3.4rem,9vw,7rem) 0 clamp(2.4rem,5vw,3.6rem);position:relative}
+.kicker{
+  font-family:var(--f-m);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--cy);display:flex;align-items:center;gap:.7rem;margin-bottom:1.6rem;
+}
+.kicker::after{content:"";height:1px;flex:1;max-width:180px;background:linear-gradient(90deg,var(--cy-deep),transparent)}
+.mast h1{
+  font-size:clamp(2.3rem,6.6vw,5.1rem);font-weight:800;letter-spacing:-.045em;
+  margin-bottom:1.5rem;max-width:19ch;
+}
+.mast h1 em{font-style:normal;color:var(--ink-3)}
+.mast .lede{font-size:clamp(1rem,1.9vw,1.2rem);color:var(--ink-2);max-width:56ch}
+.mast .lede b{color:var(--ink);font-weight:500}
+
+#trace{
+  display:block;width:100%;height:86px;margin-top:2.6rem;
+  border:1px solid var(--rule);background:var(--panel);border-radius:2px;
+}
+.trace-cap{
+  display:flex;justify-content:space-between;gap:1rem;margin-top:.5rem;
+  font-family:var(--f-m);font-size:.58rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+
+/* ── rules strip ── */
+.rules{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(198px,1fr));
+  border:1px solid var(--rule);border-radius:2px;overflow:hidden;
+  background:var(--rule);gap:1px;margin-bottom:clamp(3rem,7vw,5rem);
+}
+.rules div{background:var(--panel);padding:1.25rem 1.15rem;display:grid;gap:.5rem;align-content:start}
+.rules dt{
+  font-family:var(--f-m);font-size:.56rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--cy);
+}
+.rules dd{margin:0;font-size:.87rem;color:var(--ink-2);line-height:1.55}
+
+/* ── instrument panel ── */
+.inst{
+  border:1px solid var(--rule);border-radius:2px;background:var(--panel);
+  margin-bottom:clamp(2rem,4.5vw,3.2rem);position:relative;
+  scroll-margin-top:clamp(1rem,6vw,4rem);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .6s ease,transform .6s ease;
+}
+.inst.armed{opacity:1;transform:none}
+/* technical-drawing corner ticks */
+.inst::before,.inst::after{
+  content:"";position:absolute;width:9px;height:9px;pointer-events:none;
+  border-color:var(--rule-hot);border-style:solid;
+}
+.inst::before{top:-1px;left:-1px;border-width:1px 0 0 1px}
+.inst::after{bottom:-1px;right:-1px;border-width:0 1px 1px 0}
+
+.ihead{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.6rem 1rem;
+  padding:1.05rem 1.3rem;border-bottom:1px solid var(--rule);background:var(--panel-2);
+}
+.ihead .des{
+  font-family:var(--f-m);font-size:.66rem;letter-spacing:.18em;color:var(--cy);
+  padding:.2rem .5rem;border:1px solid var(--cy-deep);border-radius:2px;
+}
+.ihead h2{font-size:1.06rem;font-weight:600;letter-spacing:.01em}
+.ihead .cls{
+  margin-left:auto;font-family:var(--f-m);font-size:.58rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);
+}
+.ibody{padding:1.3rem}
+.iwhy{
+  font-size:.92rem;color:var(--ink-2);max-width:72ch;margin-bottom:1.3rem;line-height:1.62;
+}
+.iwhy b{color:var(--ink);font-weight:500}
+/* NOT flex — inline <i>/<code> inside the sentence would each become a
+   flex item and the prose would come apart at every tag boundary */
+.ifoot{
+  border-top:1px solid var(--rule);padding:.85rem 1.3rem;background:var(--panel-2);
+  font-family:var(--f-m);font-size:.62rem;line-height:1.75;color:var(--ink-3);
+  max-width:96ch;
+}
+.ifoot b{color:var(--warn);font-weight:500;margin-right:.6rem;letter-spacing:.12em}
+.ifoot code{color:var(--ink-2)}
+.ifoot i{color:var(--ink-2);font-style:italic}
+
+/* ── shared controls ── */
+.ctl{display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:1.15rem}
+input[type=text],input[type=password]{
+  font-family:var(--f-m);font-size:.83rem;color:var(--ink);
+  background:var(--void);border:1px solid var(--rule-hot);border-radius:2px;
+  padding:.62rem .8rem;flex:1;min-width:min(230px,100%);
+}
+input::placeholder{color:var(--ink-3)}
+input:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 3px var(--cy-glow)}
+button.act{
+  font-family:var(--f-m);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--void);background:var(--cy);border:1px solid var(--cy);border-radius:2px;
+  padding:.62rem 1.05rem;cursor:pointer;transition:.2s;
+}
+button.act:hover{background:#6BEDDE;border-color:#6BEDDE}
+button.act[disabled]{opacity:.4;cursor:progress}
+button.chip{
+  font-family:var(--f-m);font-size:.66rem;color:var(--ink-2);
+  background:var(--panel-3);border:1px solid var(--rule-hot);border-radius:2px;
+  padding:.4rem .62rem;cursor:pointer;transition:.2s;
+}
+button.chip:hover{border-color:var(--cy);color:var(--cy)}
+
+/* data table */
+.tbl{width:100%;border-collapse:collapse;font-family:var(--f-m);font-size:.74rem}
+.tbl th{
+  text-align:left;font-weight:500;font-size:.56rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-3);
+  padding:.5rem .7rem;border-bottom:1px solid var(--rule-hot);white-space:nowrap;
+}
+.tbl td{padding:.55rem .7rem;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2)}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .k{color:var(--ink-3);white-space:nowrap}
+.tbl .v{color:var(--leak);word-break:break-word}
+.tbl .n{color:var(--cy);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.scroller{overflow-x:auto}
+
+.tag{
+  font-family:var(--f-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.16rem .42rem;border-radius:2px;white-space:nowrap;
+}
+.tag.ok{color:var(--cy);background:var(--cy-deep)}
+.tag.bad{color:var(--leak);background:var(--leak-deep)}
+.tag.mid{color:var(--warn);background:#3B2C13}
+
+/* ── I-01 fingerprint ── */
+.fp-sum{
+  display:flex;flex-wrap:wrap;gap:1.4rem;align-items:baseline;
+  padding:.95rem 1.1rem;margin-bottom:1.1rem;
+  border:1px solid var(--leak-deep);background:rgba(255,111,94,.05);border-radius:2px;
+}
+.fp-sum div{display:grid;gap:.15rem}
+.fp-sum dt{font-family:var(--f-m);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.fp-sum dd{margin:0;font-family:var(--f-m);font-size:1.15rem;color:var(--leak);font-variant-numeric:tabular-nums}
+.fp-sum dd small{font-size:.66rem;color:var(--ink-3);margin-left:.25rem}
+
+/* ── I-02 differential ── */
+.diff{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:2px}
+.diff-row{
+  background:var(--panel);padding:.75rem .9rem;
+  display:grid;grid-template-columns:118px 1fr auto;gap:.9rem;align-items:center;
+}
+.diff-row .who{font-family:var(--f-m);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.diff-row .out{font-family:var(--f-m);font-size:.78rem;color:var(--ink);word-break:break-all}
+@media(max-width:620px){.diff-row{grid-template-columns:1fr;gap:.35rem}}
+.verdict{
+  margin-top:1.1rem;padding:.95rem 1.1rem;border-radius:2px;
+  font-family:var(--f-m);font-size:.76rem;line-height:1.65;
+}
+.verdict.safe{border:1px solid var(--cy-deep);background:rgba(79,216,200,.05);color:var(--ink-2)}
+.verdict.breach{border:1px solid var(--leak);background:rgba(255,111,94,.07);color:var(--ink)}
+.verdict b{color:var(--leak)}
+.verdict.safe b{color:var(--cy)}
+
+/* ── I-03 timing ── */
+.plot{display:grid;gap:3px;margin-bottom:.9rem}
+.plot-row{display:grid;grid-template-columns:38px 1fr 74px;gap:.6rem;align-items:center}
+.plot-row span{font-family:var(--f-m);font-size:.6rem;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.plot-row span:last-child{text-align:right;color:var(--ink-2)}
+.bar{height:11px;border-radius:1px;background:var(--cy);transition:width .5s cubic-bezier(.2,.8,.3,1);min-width:1px}
+.bar.slow{background:var(--leak)}
+.legend{display:flex;gap:1.2rem;flex-wrap:wrap;font-family:var(--f-m);font-size:.6rem;color:var(--ink-3);margin-bottom:1rem}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:1px;margin-right:.35rem;vertical-align:middle}
+
+/* ── I-04 avalanche ── */
+.bits{
+  display:grid;grid-template-columns:repeat(32,1fr);gap:2px;margin:1rem 0;
+  max-width:520px;
+}
+.bits i{aspect-ratio:1;border-radius:1px;background:var(--panel-3);transition:background .25s}
+.bits i.set{background:var(--cy-deep)}
+.bits i.flip{background:var(--leak);box-shadow:0 0 6px rgba(255,111,94,.6)}
+.digest{
+  font-family:var(--f-m);font-size:.68rem;word-break:break-all;color:var(--ink-2);
+  padding:.6rem .75rem;background:var(--void);border:1px solid var(--rule);border-radius:2px;
+}
+.digest b{color:var(--cy);font-weight:400}
+
+/* ── I-05 entropy ── */
+.meter{height:7px;background:var(--panel-3);border-radius:1px;overflow:hidden;margin:.9rem 0 1rem}
+.meter i{display:block;height:100%;width:0;background:var(--leak);transition:width .4s ease,background .4s ease}
+
+/* ── I-06 oracle ── */
+.orc{
+  border:1px solid var(--rule-hot);border-radius:2px;background:var(--void);
+  padding:1.15rem;margin-top:1.1rem;
+}
+.orc .sign{font-family:var(--f-m);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cy);margin-bottom:.45rem}
+.orc .nm{font-size:1.22rem;font-weight:600;margin-bottom:.75rem}
+.orc .txt{font-size:.98rem;line-height:1.72;color:var(--ink);margin-bottom:1rem}
+.orc .tell{font-family:var(--f-m);font-size:.66rem;line-height:1.75;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:.85rem}
+.orc .tell b{color:var(--leak);font-weight:500}
+
+/* ── close ── */
+.close{
+  border:1px solid var(--rule);border-radius:2px;background:var(--panel);
+  padding:clamp(1.8rem,5vw,3rem);display:grid;gap:1.2rem;justify-items:start;
+}
+.close h2{font-size:clamp(1.5rem,3.6vw,2.3rem);font-weight:800;letter-spacing:-.03em;max-width:20ch}
+.close p{color:var(--ink-2);max-width:58ch}
+.close .row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.3rem}
+.close .row a{
+  font-family:var(--f-m);font-size:.72rem;letter-spacing:.1em;border:1px solid var(--rule-hot);
+  border-radius:2px;padding:.68rem 1.15rem;color:var(--ink);display:inline-flex;align-items:center;gap:.5rem;
+  transition:.2s;
+}
+.close .row a:hover{border-color:var(--cy);color:var(--cy)}
+.close .row a svg{width:13px;height:13px}
+
+.colophon{
+  margin-top:2.4rem;padding-top:1.3rem;border-top:1px solid var(--rule);
+  font-family:var(--f-m);font-size:.6rem;line-height:1.9;color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.4rem 1.6rem;justify-content:space-between;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+  .inst{opacity:1;transform:none}
+}
+</style>
+
+<!-- ══════════════════════════ RAIL ══════════════════════════ -->
+<aside class="rail">
+  <div class="mark">
+    <b><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 2 4 13.2h6.2L9.4 22 20 10.4h-6.6L13.5 2Z"/></svg>Mythbolt</b>
+    <span>Field Instruments &middot; Rev 2</span>
+  </div>
+
+  <nav><ol class="idx" id="idx">
+    <li><a href="#i01"><i>I-01</i>Passive Leak</a></li>
+    <li><a href="#i02"><i>I-02</i>Differential</a></li>
+    <li><a href="#i03"><i>I-03</i>Side Channel</a></li>
+    <li><a href="#i04"><i>I-04</i>Avalanche</a></li>
+    <li><a href="#i05"><i>I-05</i>Search Space</a></li>
+    <li><a href="#i06"><i>I-06</i>Oracle</a></li>
+    <li><a href="#close"><i>&mdash;&mdash;</i>Engage</a></li>
+  </ol></nav>
+
+  <dl class="readout">
+    <div><dt><span class="pulse"></span>Session</dt><dd id="rSess">00:00</dd></div>
+    <div><dt>Frame</dt><dd id="rFps">&mdash;</dd></div>
+    <div><dt>Sent</dt><dd id="rSent">0 B</dd></div>
+  </dl>
+</aside>
+
+<!-- ══════════════════════════ BAY ══════════════════════════ -->
+<main class="bay">
+
+  <header class="mast">
+    <p class="kicker">Offensive Security Practice</p>
+    <h1>A system is what it does, <em>not what it says it does.</em></h1>
+    <p class="lede">
+      Everything below is a working instrument, not a description of one. Each panel runs
+      a real technique against real data &mdash; <b>your browser, your input, right now</b> &mdash;
+      because a security claim you cannot reproduce is just a claim.
+    </p>
+    <canvas id="trace" aria-label="Live frame-timing trace for this device"></canvas>
+    <div class="trace-cap">
+      <span>Fig. 0 &mdash; frame interval, this device, live &middot; full scale 25 ms</span>
+      <span id="traceStat">sampling&hellip;</span>
+    </div>
+  </header>
+
+  <dl class="rules">
+    <div><dt>Rule 01</dt><dd>Every claim on this page is demonstrated on this page.</dd></div>
+    <div><dt>Rule 02</dt><dd>Nothing you type or reveal here is transmitted or stored. Ever.</dd></div>
+    <div><dt>Rule 03</dt><dd>Findings are reported to the vendor first, and stay private until they say otherwise.</dd></div>
+    <div><dt>Rule 04</dt><dd>Work is delivered as proof you can reproduce without us in the room.</dd></div>
+  </dl>
+
+  <!-- ═══════ I-01 ═══════ -->
+  <section class="inst" id="i01">
+    <div class="ihead">
+      <span class="des">I-01</span><h2>Passive Leak</h2>
+      <span class="cls">Reconnaissance &middot; zero interaction</span>
+    </div>
+    <div class="ibody">
+      <p class="iwhy">
+        You have not agreed to anything, filled in anything, or clicked anything. This is
+        simply what your browser <b>volunteers</b> to every origin you visit, gathered in
+        a few milliseconds. Individually each value is dull. Together they are close enough
+        to unique to follow you between sites without a cookie in sight.
+      </p>
+      <dl class="fp-sum">
+        <div><dt>Signals read</dt><dd id="fpN">&mdash;</dd></div>
+        <div><dt>Combined entropy</dt><dd id="fpBits">&mdash;<small>bits (est.)</small></dd></div>
+        <div><dt>Device handle</dt><dd id="fpHash">&mdash;</dd></div>
+        <div><dt>Read in</dt><dd id="fpMs">&mdash;<small>ms</small></dd></div>
+      </dl>
+      <div class="scroller"><table class="tbl">
+        <thead><tr><th>Signal</th><th>Value</th><th>Est. bits</th></tr></thead>
+        <tbody id="fpBody"></tbody>
+      </table></div>
+    </div>
+    <p class="ifoot"><b>NOTE</b>
+      Entropy figures are order-of-magnitude estimates from published population
+      distributions, not measurements of you specifically. The handle is a digest of the
+      values above, computed in this tab and never sent anywhere.</p>
+  </section>
+
+  <!-- ═══════ I-02 ═══════ -->
+  <section class="inst" id="i02">
+    <div class="ihead">
+      <span class="des">I-02</span><h2>Path Normalisation</h2>
+      <span class="cls">Textbook demonstration &middot; OWASP A01</span>
+    </div>
+    <div class="ibody">
+      <p class="iwhy">
+        A long-documented class of web weakness, shown rather than described. A guard allows
+        anything under <code class="mono">/public/</code> by inspecting the raw string, while
+        the router decodes and normalises the path before dispatching. When two components
+        read the same request differently, <b>the decision gets made about one thing and
+        applied to another</b>. Feed them a path and watch it happen.
+      </p>
+      <div class="ctl">
+        <input type="text" id="dPath" value="/public/../admin" spellcheck="false"
+               aria-label="Request path to test">
+        <button class="act" id="dRun">Resolve</button>
+      </div>
+      <div class="ctl" id="dEg"></div>
+      <div class="diff" id="dOut"></div>
+      <div class="verdict safe" id="dVerdict">&mdash;</div>
+    </div>
+    <p class="ifoot"><b>NOTE</b>
+      The guard here is deliberately typical, not strawman: a raw-prefix allowlist is what
+      you find in real middleware. The fix is never a better blocklist &mdash; it is deciding
+      on the <i>same normalised value</i> the router will act on.</p>
+  </section>
+
+  <!-- ═══════ I-03 ═══════ -->
+  <section class="inst" id="i03">
+    <div class="ihead">
+      <span class="des">I-03</span><h2>Timing Side Channel</h2>
+      <span class="cls">Cryptographic hygiene &middot; measured live</span>
+    </div>
+    <div class="ibody">
+      <p class="iwhy">
+        A naive string comparison returns the moment it finds a mismatch, so it takes
+        fractionally longer the more characters you get right. That is enough to recover a
+        secret one character at a time. This runs both comparisons on <b>your CPU, now</b>,
+        and plots how long each takes against how much of the secret the guess already matches.
+      </p>
+      <div class="ctl"><button class="act" id="tRun">Run measurement</button></div>
+      <div class="legend">
+        <span><i style="background:var(--leak)"></i>Naive early-return compare</span>
+        <span><i style="background:var(--cy)"></i>Constant-time compare</span>
+      </div>
+      <div class="plot" id="tPlot"></div>
+      <div class="verdict safe" id="tVerdict">Not yet measured.</div>
+    </div>
+    <p class="ifoot"><b>NOTE</b>
+      A browser is a noisy oscilloscope &mdash; timers are deliberately coarsened and the JIT
+      interferes. We take the minimum across repeated trials, which is the standard way to
+      suppress scheduler noise. The <i>slope</i> is the finding, not any single value.</p>
+  </section>
+
+  <!-- ═══════ I-04 ═══════ -->
+  <section class="inst" id="i04">
+    <div class="ihead">
+      <span class="des">I-04</span><h2>Avalanche</h2>
+      <span class="cls">Primitive behaviour &middot; SHA-256</span>
+    </div>
+    <div class="ibody">
+      <p class="iwhy">
+        Change one character of the input and a sound hash changes roughly <b>half of all 256
+        output bits</b>, unpredictably. That property is the whole reason a digest can stand in
+        for a document. Type below; the grid shows every bit of the digest, with the bits that
+        flipped against the previous input marked in coral.
+      </p>
+      <div class="ctl">
+        <input type="text" id="aIn" value="mythbolt" spellcheck="false" aria-label="Text to digest">
+      </div>
+      <div class="bits" id="aBits" aria-hidden="true"></div>
+      <p class="digest" id="aHex">&mdash;</p>
+      <p class="digest" style="margin-top:.5rem">Bits changed vs previous input: <b id="aFlip">&mdash;</b></p>
+    </div>
+    <p class="ifoot"><b>NOTE</b>
+      Computed with the platform's own SubtleCrypto SHA-256. Requires a secure context, so
+      it is live on this site but inert if you open the file locally over
+      <code>file://</code>.</p>
+  </section>
+
+  <!-- ═══════ I-05 ═══════ -->
+  <section class="inst" id="i05">
+    <div class="ihead">
+      <span class="des">I-05</span><h2>Search Space</h2>
+      <span class="cls">Credential strength &middot; honest arithmetic</span>
+    </div>
+    <div class="ibody">
+      <p class="iwhy">
+        Strength meters usually reward you for theatre &mdash; a capital letter here, a
+        <code class="mono">!</code> there. The only thing that matters is <b>how many guesses
+        an attacker must make</b>. This shows the real arithmetic, and tells you honestly when
+        the arithmetic does not apply.
+      </p>
+      <div class="ctl">
+        <input type="password" id="eIn" placeholder="type a candidate — it stays in this tab"
+               autocomplete="off" aria-label="Candidate passphrase">
+        <button class="chip" id="eShow" type="button">Show</button>
+      </div>
+      <div class="meter"><i id="eBar"></i></div>
+      <div class="scroller"><table class="tbl"><tbody id="eBody"></tbody></table></div>
+    </div>
+    <p class="ifoot"><b>NOTE</b>
+      This models a <i>randomly generated</i> string over the character classes you used. A
+      human-chosen password of the same shape is worth dramatically less, because real cracking
+      starts with wordlists and mutation rules, not with A&hellip;Z. If your candidate is a word
+      with substitutions, treat the number below as an upper bound you will never reach.</p>
+  </section>
+
+  <!-- ═══════ I-06 ═══════ -->
+  <section class="inst" id="i06">
+    <div class="ihead">
+      <span class="des">I-06</span><h2>The Oracle</h2>
+      <span class="cls">Human layer &middot; Forer effect</span>
+    </div>
+    <div class="ibody">
+      <p class="iwhy">
+        The cheapest way past a control is usually to ask someone politely. Give this
+        instrument a name and it will read you accurately &mdash; then show you exactly
+        <b>why it was able to</b>.
+      </p>
+      <div class="ctl">
+        <input type="text" id="oIn" placeholder="a name, or a LinkedIn profile URL"
+               spellcheck="false" aria-label="Name for the reading">
+        <button class="act" id="oRun">Read</button>
+      </div>
+      <div class="orc" id="oOut" hidden aria-live="polite">
+        <p class="sign" id="oSign"></p>
+        <p class="nm" id="oName"></p>
+        <p class="txt" id="oTxt"></p>
+        <p class="tell">
+          Drawn from a pool of <b id="oPool">0</b> readings, seeded by the name and today's
+          date &mdash; so it is stable all day, which is what makes it feel earned. It fits
+          almost anyone who reads it. You also handed a stranger a professional identity for
+          it. <b>Yours went nowhere. That is usually the only difference.</b>
+        </p>
+      </div>
+    </div>
+    <p class="ifoot"><b>NOTE</b>
+      Every fragment is written to be true of most people most days. That is the whole
+      technique, and it is the same one behind the message from your CEO that needs a wire
+      transfer before close of business.</p>
+  </section>
+
+  <!-- ═══════ CLOSE ═══════ -->
+  <section class="inst" id="close" style="border-color:var(--rule-hot)">
+    <div class="close">
+      <p class="kicker" style="margin-bottom:0">Engage</p>
+      <h2>Bring us the thing you cannot afford to lose.</h2>
+      <p>
+        Scoping starts with the outcome that would actually hurt &mdash; the account, the
+        record, the transfer &mdash; and works backwards. You get reproducible proof, the
+        controls that rule out a false positive, and an honest account of what held.
+      </p>
+      <div class="row">
+        <a href="mailto:hello@mythbolt.com">hello@mythbolt.com
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="https://www.linkedin.com/in/sandeshgg/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.76-1.95C21.6 8.75 23 11 23 14.5V21h-4v-5.8c0-1.4-.03-3.2-2-3.2s-2.3 1.5-2.3 3.1V21h-4V9Z"/></svg>
+          LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="colophon">
+    <span>Mythbolt &middot; mythbolt.com &middot; offensive security</span>
+    <span>No analytics. No cookies. No network calls after load.</span>
+  </div>
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   Instruments. Each one performs the thing its panel claims.
+   Nothing here opens a socket. The only network the page ever makes
+   is the webfont request in <head>.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+"use strict";
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var $=function(id){return document.getElementById(id)};
+function txt(el,s){ el.textContent=s; }          // never innerHTML with input
+
+/* ── arming + index highlight ─────────────────────────── */
+var panels=[].slice.call(document.querySelectorAll('.inst'));
+if('IntersectionObserver' in window){
+  var armer=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){e.target.classList.add('armed');armer.unobserve(e.target)} });
+  },{rootMargin:'0px 0px -8% 0px',threshold:.06});
+  panels.forEach(function(p){armer.observe(p)});
+  var links=[].slice.call(document.querySelectorAll('.idx a'));
+  var spy=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id)});
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  panels.forEach(function(p){spy.observe(p)});
+}else panels.forEach(function(p){p.classList.add('armed')});
+
+/* ── rail readout ─────────────────────────────────────── */
+var t0=Date.now();
+setInterval(function(){
+  var s=Math.floor((Date.now()-t0)/1000);
+  txt($('rSess'),String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'));
+},1000);
+txt($('rSent'),'0 B');
+
+/* ── Fig. 0 — real frame-interval trace ───────────────── */
+(function(){
+  var cv=$('trace'), ctx=cv.getContext('2d'), hist=[], last=performance.now(), DPR=1;
+  function size(){
+    DPR=Math.min(devicePixelRatio||1,2);
+    cv.width=cv.clientWidth*DPR; cv.height=cv.clientHeight*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  size(); addEventListener('resize',size,{passive:true});
+  var frames=0,acc=0,lastReport=performance.now();
+  function tick(now){
+    var dt=now-last; last=now;
+    hist.push(dt); if(hist.length>260) hist.shift();
+    frames++; acc+=dt;
+    if(now-lastReport>500){
+      txt($('rFps'),(1000/(acc/frames)).toFixed(0)+' fps');
+      var srt=hist.slice().sort(function(a,b){return a-b});
+      txt($('traceStat'),'median '+(srt[srt.length>>1]||0).toFixed(1)+' ms · n='+hist.length);
+      frames=0;acc=0;lastReport=now;
+    }
+    var W=cv.clientWidth,H=cv.clientHeight;
+    ctx.clearRect(0,0,W,H);
+    // baseline grid
+    ctx.strokeStyle='#1B2629'; ctx.lineWidth=1;
+    [.25,.5,.75].forEach(function(f){
+      ctx.beginPath(); ctx.moveTo(0,H*f+.5); ctx.lineTo(W,H*f+.5); ctx.stroke();
+    });
+    // 0..25 ms across the full height, so a healthy 16.7 ms frame sits
+    // two-thirds up rather than flat on the floor
+    ctx.beginPath();
+    hist.forEach(function(v,i){
+      var x=i/(260-1)*W, y=H-Math.min(1,v/25)*H;
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    });
+    ctx.strokeStyle='#4FD8C8'; ctx.lineWidth=1.3; ctx.stroke();
+    ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+    ctx.fillStyle='rgba(79,216,200,.07)'; ctx.fill();
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+/* ═══════ I-01 · PASSIVE LEAK ═══════════════════════════ */
+(function(){
+  var start=performance.now();
+  function canvasHash(){
+    try{
+      var c=document.createElement('canvas'); c.width=220;c.height=40;
+      var g=c.getContext('2d');
+      g.textBaseline='top'; g.font='16px "Arial"';
+      g.fillStyle='#f60'; g.fillRect(0,0,80,20);
+      g.fillStyle='#069'; g.fillText('Mythbolt ☁ ⚡',2,4);
+      g.fillStyle='rgba(102,204,0,.7)'; g.fillText('Mythbolt ☁ ⚡',4,8);
+      return c.toDataURL();
+    }catch(e){ return 'unavailable' }
+  }
+  function gl(){
+    try{
+      var c=document.createElement('canvas');
+      var x=c.getContext('webgl')||c.getContext('experimental-webgl');
+      if(!x) return null;
+      var d=x.getExtension('WEBGL_debug_renderer_info');
+      return d? String(x.getParameter(d.UNMASKED_RENDERER_WEBGL)) : String(x.getParameter(x.RENDERER));
+    }catch(e){ return null }
+  }
+  function audio(){
+    try{
+      var A=window.AudioContext||window.webkitAudioContext; if(!A) return null;
+      var c=new A(); var r=c.sampleRate; c.close&&c.close(); return r+' Hz';
+    }catch(e){ return null }
+  }
+  var nav=navigator, scr=screen;
+  var rows=[
+    ['User agent',            nav.userAgent,                                          10],
+    ['Platform',              nav.platform||nav.userAgentData&&nav.userAgentData.platform||'—', 3],
+    ['Languages',             (nav.languages||[nav.language]).join(', '),              6],
+    ['Time zone',             Intl.DateTimeFormat().resolvedOptions().timeZone,        8],
+    ['UTC offset',            (-(new Date().getTimezoneOffset())/60)+' h',             3],
+    ['Screen',                scr.width+' × '+scr.height+' @'+(devicePixelRatio||1)+'x', 8],
+    ['Colour depth',          scr.colorDepth+'-bit',                                   2],
+    ['Viewport',              innerWidth+' × '+innerHeight,                            6],
+    ['CPU threads',           nav.hardwareConcurrency||'withheld',                     3],
+    ['Device memory',         nav.deviceMemory? nav.deviceMemory+' GB':'withheld',     2],
+    ['Touch points',          nav.maxTouchPoints,                                      2],
+    ['GPU renderer',          gl()||'withheld',                                        9],
+    ['Audio sample rate',     audio()||'withheld',                                     2],
+    ['Canvas render',         canvasHash().slice(-42),                                12],
+    ['Reduced motion',        reduce?'yes':'no',                                       1],
+    ['Cookies enabled',       nav.cookieEnabled?'yes':'no',                            1],
+    ['Do Not Track',          nav.doNotTrack||'unset',                                 1]
+  ];
+  // fnv-1a over everything, shown as the "handle"
+  var blob=rows.map(function(r){return r[0]+'='+r[1]}).join('|');
+  var h=0x811c9dc5;
+  for(var i=0;i<blob.length;i++){ h^=blob.charCodeAt(i); h=(h+((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24)))>>>0; }
+  var ms=performance.now()-start;
+
+  var body=$('fpBody');
+  rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    var a=document.createElement('td'); a.className='k'; a.textContent=r[0];
+    var b=document.createElement('td'); b.className='v';
+    b.textContent=String(r[1]).length>78? String(r[1]).slice(0,78)+'…' : String(r[1]);
+    var c=document.createElement('td'); c.className='n'; c.textContent='~'+r[2];
+    tr.appendChild(a);tr.appendChild(b);tr.appendChild(c);
+    body.appendChild(tr);
+  });
+  txt($('fpN'),String(rows.length));
+  txt($('fpBits'),String(rows.reduce(function(s,r){return s+r[2]},0)));
+  $('fpHash').firstChild? txt($('fpHash'),'') : 0;
+  txt($('fpHash'),h.toString(16).padStart(8,'0'));
+  txt($('fpMs'),ms.toFixed(1));
+})();
+
+/* ═══════ I-02 · PARSER DIFFERENTIAL ════════════════════ */
+(function(){
+  var GUARD_PREFIX='/public/';
+
+  // (a) what a typical middleware guard sees: the raw string
+  function guardSees(p){ return p; }
+  function guardAllows(p){ return p.indexOf(GUARD_PREFIX)===0; }
+
+  // (b) what the router actually dispatches: decode, then resolve
+  function routerResolves(p){
+    var s=p;
+    for(var i=0;i<2;i++){                    // proxies decode more than once
+      try{ var d=decodeURIComponent(s); if(d===s) break; s=d; }catch(e){ break }
+    }
+    s=s.replace(/\\/g,'/');                  // backslash treated as a separator
+    var out=[];
+    s.split('/').forEach(function(seg){
+      if(seg===''||seg==='.') return;
+      if(seg==='..'){ out.pop(); return; }
+      out.push(seg);
+    });
+    return '/'+out.join('/');
+  }
+  function inPublic(p){ return p==='/public'||p.indexOf('/public/')===0 }
+
+  // the canonical textbook forms, as documented in OWASP's traversal guidance
+  var EG=['/public/../admin','/public/..%2fadmin','/public/./../admin',
+          '/public/subdir/../../admin','/public/logo.png'];
+
+  var out=$('dOut'), verdict=$('dVerdict'), input=$('dPath');
+
+  function row(who,val,cls){
+    var d=document.createElement('div'); d.className='diff-row';
+    var a=document.createElement('span'); a.className='who'; a.textContent=who;
+    var b=document.createElement('span'); b.className='out'; b.textContent=val;
+    var c=document.createElement('span');
+    if(cls){ c.className='tag '+cls[0]; c.textContent=cls[1]; }
+    d.appendChild(a);d.appendChild(b);d.appendChild(c);
+    return d;
+  }
+
+  function run(){
+    var p=input.value||'';
+    var seen=guardSees(p), allow=guardAllows(p);
+    var real=routerResolves(p), safe=inPublic(real);
+
+    out.textContent='';
+    out.appendChild(row('Request', p||'(empty)',null));
+    out.appendChild(row('Guard reads', seen||'(empty)', allow?['ok','allow']:['bad','deny']));
+    out.appendChild(row('Router serves', real, safe?['ok','in /public']:['bad','outside /public']));
+
+    var breach = allow && !safe;
+    verdict.className='verdict '+(breach?'breach':'safe');
+    verdict.textContent='';
+    var strong=document.createElement('b');
+    if(breach){
+      strong.textContent='DISAGREEMENT — ';
+      verdict.appendChild(strong);
+      verdict.appendChild(document.createTextNode(
+        'the guard approved this request because the raw string begins with /public/, '+
+        'but the router will serve '+real+'. Authorisation was decided on a value that '+
+        'was never the one acted upon. That is the bug — not the traversal.'));
+    }else if(!allow){
+      strong.textContent='DENIED — ';
+      verdict.appendChild(strong);
+      verdict.appendChild(document.createTextNode(
+        'the guard rejected it outright, so guard and router never had the chance to differ.'));
+    }else{
+      strong.textContent='AGREED — ';
+      verdict.appendChild(strong);
+      verdict.appendChild(document.createTextNode(
+        'both components resolve this to the same place inside /public. No gap here.'));
+    }
+  }
+
+  var eg=$('dEg');
+  EG.forEach(function(s){
+    var b=document.createElement('button');
+    b.type='button'; b.className='chip'; b.textContent=s;
+    b.addEventListener('click',function(){ input.value=s; run() });
+    eg.appendChild(b);
+  });
+  $('dRun').addEventListener('click',run);
+  input.addEventListener('input',run);
+  input.addEventListener('keydown',function(e){ if(e.key==='Enter') run() });
+  run();
+})();
+
+/* ═══════ I-03 · TIMING SIDE CHANNEL ════════════════════ */
+(function(){
+  var SECRET='c0rrect-horse-battery-01', N=24, ITER=26000, TRIALS=7;
+
+  function naiveEq(a,b){
+    if(a.length!==b.length) return false;
+    for(var i=0;i<a.length;i++){ if(a.charCodeAt(i)!==b.charCodeAt(i)) return false; }
+    return true;
+  }
+  function ctEq(a,b){
+    var d=a.length^b.length, n=Math.max(a.length,b.length);
+    for(var i=0;i<n;i++){ d|=(a.charCodeAt(i)|0)^(b.charCodeAt(i)|0); }
+    return d===0;
+  }
+  function candidate(k){
+    return SECRET.slice(0,k)+' '.repeat(Math.max(0,SECRET.length-k));
+  }
+  function measure(fn,cand){
+    var best=Infinity, sink=0;
+    for(var t=0;t<TRIALS;t++){
+      var s=performance.now();
+      for(var i=0;i<ITER;i++){ sink^=fn(SECRET,cand)?1:0; }
+      var e=performance.now()-s;
+      if(e<best) best=e;
+    }
+    if(sink===123456) console.log(sink);   // keep the JIT honest
+    return best;
+  }
+
+  var plot=$('tPlot'), verdict=$('tVerdict'), btn=$('tRun');
+
+  btn.addEventListener('click',function(){
+    btn.disabled=true; btn.textContent='Measuring…';
+    plot.textContent='';
+    setTimeout(function(){
+      var naive=[], ct=[];
+      for(var k=0;k<=N;k+=3){
+        var c=candidate(k);
+        naive.push([k,measure(naiveEq,c)]);
+        ct.push([k,measure(ctEq,c)]);
+      }
+      var all=naive.concat(ct).map(function(r){return r[1]});
+      var max=Math.max.apply(null,all)||1;
+
+      naive.forEach(function(r,i){
+        [['slow',r],['',ct[i]]].forEach(function(pair){
+          var row=document.createElement('div'); row.className='plot-row';
+          var lab=document.createElement('span'); lab.textContent=pair[0]?('k='+r[0]):'';
+          var wrap=document.createElement('div');
+          var bar=document.createElement('div');
+          bar.className='bar'+(pair[0]?' slow':'');
+          bar.style.width=Math.max(1,(pair[1][1]/max)*100)+'%';
+          wrap.appendChild(bar);
+          var val=document.createElement('span'); val.textContent=pair[1][1].toFixed(2)+' ms';
+          row.appendChild(lab);row.appendChild(wrap);row.appendChild(val);
+          plot.appendChild(row);
+        });
+      });
+
+      // slope: does the naive one grow with prefix length?
+      var first=naive[0][1], last=naive[naive.length-1][1];
+      var ctFirst=ct[0][1], ctLast=ct[ct.length-1][1];
+      var naiveGrowth=(last-first)/(first||1)*100;
+      var ctGrowth=Math.abs((ctLast-ctFirst)/(ctFirst||1))*100;
+
+      verdict.className='verdict '+(naiveGrowth>18?'breach':'safe');
+      verdict.textContent='';
+      var b=document.createElement('b');
+      b.textContent=naiveGrowth>18?'LEAK CONFIRMED — ':'INCONCLUSIVE ON THIS RUN — ';
+      verdict.appendChild(b);
+      verdict.appendChild(document.createTextNode(
+        'the naive compare grew '+naiveGrowth.toFixed(0)+'% from a zero-character match to a '+
+        'full-length match, while the constant-time compare varied '+ctGrowth.toFixed(0)+'%. '+
+        (naiveGrowth>18
+          ? 'That slope is the oracle: guess a character, keep it if the response is slower, repeat. '+
+            'A '+SECRET.length+'-character secret falls in about '+(SECRET.length*95)+' requests instead of 95^'+SECRET.length+'.'
+          : 'Timer coarsening or a busy CPU has buried the signal this time — try again with the tab focused. '+
+            'The absence of a measurement here is not evidence the leak is absent.')));
+      btn.disabled=false; btn.textContent='Run again';
+    },40);
+  });
+})();
+
+/* ═══════ I-04 · AVALANCHE ══════════════════════════════ */
+(function(){
+  var grid=$('aBits'), hex=$('aHex'), flip=$('aFlip'), input=$('aIn');
+  for(var i=0;i<256;i++) grid.appendChild(document.createElement('i'));
+  var cells=[].slice.call(grid.children), prevBits=null;
+
+  var subtle = (window.crypto && crypto.subtle && crypto.subtle.digest) ? crypto.subtle : null;
+  if(!subtle){
+    txt(hex,'SubtleCrypto unavailable in this context (needs https or localhost).');
+    input.disabled=true; return;
+  }
+  function render(buf){
+    var b=new Uint8Array(buf), bits=[];
+    for(var i=0;i<b.length;i++) for(var j=7;j>=0;j--) bits.push((b[i]>>j)&1);
+    var changed=0;
+    bits.forEach(function(bit,i){
+      var c=cells[i]; c.className='';
+      if(prevBits && prevBits[i]!==bit){ c.className='flip'; changed++; }
+      else if(bit) c.className='set';
+    });
+    txt(hex,[].map.call(b,function(x){return x.toString(16).padStart(2,'0')}).join(''));
+    txt(flip, prevBits? changed+' of 256  ('+(changed/256*100).toFixed(1)+'%)' : 'first sample');
+    prevBits=bits;
+  }
+  function go(){
+    subtle.digest('SHA-256',new TextEncoder().encode(input.value)).then(render)
+      .catch(function(){ txt(hex,'digest failed in this context'); });
+  }
+  input.addEventListener('input',go);
+  go();
+})();
+
+/* ═══════ I-05 · SEARCH SPACE ═══════════════════════════ */
+(function(){
+  var input=$('eIn'), bar=$('eBar'), body=$('eBody'), show=$('eShow');
+  show.addEventListener('click',function(){
+    var p=input.type==='password';
+    input.type=p?'text':'password'; show.textContent=p?'Hide':'Show';
+  });
+
+  var RATES=[['Stolen hash, one GPU','1e10'],['Stolen hash, serious rig','1e12'],['Online, rate-limited','1e2']];
+
+  function human(sec){
+    if(!isFinite(sec)) return 'beyond estimate';
+    var u=[[1,'seconds'],[60,'minutes'],[3600,'hours'],[86400,'days'],
+           [31557600,'years'],[31557600e3,'thousand years'],[31557600e6,'million years'],
+           [31557600e9,'billion years']];
+    for(var i=u.length-1;i>=0;i--){ if(sec>=u[i][0]) return (sec/u[i][0]).toPrecision(3)+' '+u[i][1]; }
+    return 'instant';
+  }
+
+  function go(){
+    var v=input.value||'';
+    var pool=0, classes=[];
+    if(/[a-z]/.test(v)){pool+=26;classes.push('lower')}
+    if(/[A-Z]/.test(v)){pool+=26;classes.push('upper')}
+    if(/[0-9]/.test(v)){pool+=10;classes.push('digit')}
+    if(/[^A-Za-z0-9]/.test(v)){pool+=33;classes.push('symbol')}
+    var bits = v.length? v.length*Math.log2(pool||1) : 0;
+    var space = Math.pow(2,bits);
+
+    bar.style.width=Math.min(100,bits/128*100)+'%';
+    bar.style.background = bits<40?'var(--leak)' : bits<70?'var(--warn)' : 'var(--cy)';
+
+    body.textContent='';
+    function put(k,val,cls){
+      var tr=document.createElement('tr');
+      var a=document.createElement('td'); a.className='k'; a.textContent=k;
+      var b=document.createElement('td'); b.className=cls||'v'; b.textContent=val;
+      tr.appendChild(a);tr.appendChild(b);body.appendChild(tr);
+    }
+    put('Length', v.length+' characters','n');
+    put('Character classes', classes.length? classes.join(' + ')+'  →  pool of '+pool : 'none','n');
+    put('Entropy', bits.toFixed(1)+' bits','n');
+    put('Search space', v.length? '2^'+bits.toFixed(1)+'  ≈  10^'+(bits*0.30103).toFixed(1) : '—','n');
+    RATES.forEach(function(r){
+      var rate=Number(r[1]);
+      put(r[0], v.length? human(space/2/rate) : '—','n');
+    });
+  }
+  input.addEventListener('input',go);
+  go();
+})();
+
+/* ═══════ I-06 · THE ORACLE ═════════════════════════════ */
+(function(){
+  var OPEN=[
+   "You read a room faster than you let on, and you keep most of it to yourself.",
+   "There is a version of you that few colleagues meet, and it does your best thinking.",
+   "You hold yourself to a standard you would never impose on anyone else.",
+   "You finish what other people started and tend not to mention it.",
+   "Independence matters to you more than most people realise, which is why advice lands oddly.",
+   "You have been underestimated at least once by someone who should have known better.",
+   "A good argument moves you where a loud one does not.",
+   "Part of you is still choosing between the safe road and the interesting one.",
+   "You notice the detail everyone else walks past, and it has cost you sleep.",
+   "You would rather be told the truth late than be managed early.",
+   "You have outgrown a role you are still, technically, performing.",
+   "You are better in a crisis than in a queue.",
+   "There is something you are good at that you stopped counting as a skill.",
+   "You trust patterns more than promises, and you have been right to.",
+   "You changed your mind about something important this year and told almost nobody.",
+   "Praise makes you slightly suspicious. You check the workings anyway."
+  ];
+  var TURN=[
+   "Today rewards the small thing you have been postponing.",
+   "Something you had filed as settled asks one more question of you today.",
+   "An ordinary conversation today carries more weight than its length suggests.",
+   "Today favours the second attempt over the first idea.",
+   "A door you assumed was closed turns out to be merely unlatched.",
+   "Someone hands you a half-formed idea today. The good part of it is real.",
+   "A delay today is working in your favour, though not yet visibly.",
+   "The useful part of today happens just after the part you were dreading.",
+   "Something small breaks your way today and you may miss it entirely.",
+   "An old piece of work comes back useful today.",
+   "You will be given an opening today that does not announce itself.",
+   "A decision you have been circling gets simpler today. Not easier, simpler."
+  ];
+  var CARE=[
+   "Be careful of agreeing to something today only because the pause got long.",
+   "One message today deserves a second read before you answer it.",
+   "Someone's confidence today is not the same thing as their evidence.",
+   "Take care not to solve a problem nobody asked you to solve.",
+   "Check the thing you are most sure about. That is the one carrying the risk.",
+   "Resist explaining yourself to someone who has already decided.",
+   "The tempting option today is quick and very slightly wrong.",
+   "Do not confuse being needed with being useful.",
+   "Be careful with a promise made in a good mood.",
+   "The detail you are skipping is the one you will be asked about."
+  ];
+  var CLOSE=[
+   "The week bends your way after that.",
+   "You are closer than the current evidence suggests.",
+   "What you build this week outlasts the reason you started it.",
+   "The effort is registering, including where nobody has said so.",
+   "The next good thing arrives sideways.",
+   "You have more room to manoeuvre than you are using.",
+   "Trust the version of you that made the plan.",
+   "It resolves. Sooner than the worry says."
+  ];
+  var SIGNS=["The Lantern","The Watcher","The Ford","The Kite","The Ash","The Cistern",
+             "The Heron","The Anvil","The Thread","The Beacon","The Hollow","The Compass"];
+  var POOL=OPEN.length*TURN.length*CARE.length*CLOSE.length;
+
+  function seedOf(s){
+    var h=0x811c9dc5;
+    for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=(h+((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24)))>>>0; }
+    return h>>>0;
+  }
+  function roll(seed){ var s=seed>>>0; return function(n){ s=(Math.imul(s,1664525)+1013904223)>>>0; return s%n } }
+  function readName(raw){
+    var v=String(raw||'').trim();
+    var m=v.match(/linkedin\.com\/in\/([^\/?#\s]+)/i);
+    if(m) v=m[1];
+    try{ v=decodeURIComponent(v) }catch(e){}
+    v=v.replace(/[-_+]+/g,' ').replace(/\s*\b[0-9a-f]{6,}\b\s*$/i,'')
+       .replace(/\s*\b\d{1,4}\b\s*$/,'').replace(/\s+/g,' ').trim();
+    if(!v) return 'Traveller';
+    v=v.replace(/\b[\p{L}]/gu,function(c){return c.toUpperCase()});
+    return v.length>44? v.slice(0,44).trim() : v;
+  }
+
+  var out=$('oOut');
+  function go(){
+    var name=readName($('oIn').value);
+    var pick=roll(seedOf(name.toLowerCase()+'|'+new Date().toISOString().slice(0,10)));
+    txt($('oSign'), SIGNS[pick(SIGNS.length)]+' · '+
+      new Date().toLocaleDateString(undefined,{day:'numeric',month:'long'}));
+    txt($('oName'), name);
+    txt($('oTxt'), [OPEN[pick(OPEN.length)],TURN[pick(TURN.length)],
+                    CARE[pick(CARE.length)],CLOSE[pick(CLOSE.length)]].join(' '));
+    txt($('oPool'), POOL.toLocaleString());
+    out.hidden=false;
+  }
+  $('oRun').addEventListener('click',go);
+  $('oIn').addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault();go()} });
+})();
+
+})();
+</script>
