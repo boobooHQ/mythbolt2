@@ -871,6 +871,7 @@ txt($('rSent'),'0 B');
 /* ═══════ I-03 · TIMING SIDE CHANNEL ════════════════════ */
 (function(){
   var SECRET='c0rrect-horse-battery-01', N=24, ITER=26000, TRIALS=7;
+  var PAD='#';   // printable filler, absent from SECRET, so position k mismatches
 
   function naiveEq(a,b){
     if(a.length!==b.length) return false;
@@ -883,7 +884,7 @@ txt($('rSent'),'0 B');
     return d===0;
   }
   function candidate(k){
-    return SECRET.slice(0,k)+' '.repeat(Math.max(0,SECRET.length-k));
+    return SECRET.slice(0,k)+PAD.repeat(Math.max(0,SECRET.length-k));
   }
   function measure(fn,cand){
     var best=Infinity, sink=0;
