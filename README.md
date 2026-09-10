@@ -1,6 +1,7 @@
 # Mythbolt — Field Instruments
 
-Rev 2 of mythbolt.com. A rack of working security instruments rather than a brochure.
+Rev 2 of mythbolt.com. A rack of working security instruments rather than a brochure,
+styled as a Ghibli workshop — lamplight, brass, aged paper tags, dust in the beam.
 
 Every panel performs the technique it describes, live, against the visitor's own browser
 and input. Six instruments: passive fingerprint, path normalisation, timing side channel,
@@ -12,7 +13,9 @@ hash avalanche, search space, and a Forer-effect demonstration.
 - `build.sh` — regenerates `index.html`
 
 Single self-contained file. No bundler, no dependencies, no framework.
-Fonts from Google Fonts; all CSS and JS inline.
+Shippori Mincho + Courier Prime from Google Fonts; all CSS, JS and artwork inline.
+
+Colour is semantic: **brass = the instrument, vermilion = you / the gap, moss = agreement.**
 
 ## Constraints this build holds to
 - **Nothing is transmitted.** No analytics, no cookies, no network calls after load.
